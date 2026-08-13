@@ -7,14 +7,12 @@ public class FluidCompositionEntry
 {
     public string fluidName;
     public Color color;
-    public float volume;
     public float concentration;
 }
 
 [Serializable]
 public struct FluidData
 {
-    public string fluidName;
     public Color color;
     public float currentVolume;
     public float maxVolume;
@@ -22,7 +20,6 @@ public struct FluidData
 
     public FluidData(string fluidName, Color color, float currentVolume, float maxVolume)
     {
-        this.fluidName = fluidName;
         this.color = color;
         this.currentVolume = Mathf.Max(0f, currentVolume);
         this.maxVolume = Mathf.Max(0f, maxVolume);
@@ -32,28 +29,45 @@ public struct FluidData
         {
             this.mixture.Add(new FluidCompositionEntry
             {
-                fluidName = fluidName,
+                fluidName = string.IsNullOrWhiteSpace(fluidName) ? "Liquid" : fluidName,
                 color = color,
-                volume = this.currentVolume,
                 concentration = 1f
             });
         }
     }
 
+    public string GetDisplayName()
+    {
+        if (mixture == null || mixture.Count == 0)
+            return "Empty";
+
+        if (mixture.Count == 1)
+            return string.IsNullOrWhiteSpace(mixture[0].fluidName) ? "Liquid" : mixture[0].fluidName;
+
+        return "Mixture";
+    }
+
     public FluidData WithVolume(float volume)
     {
-        var data = new FluidData(fluidName, color, volume, maxVolume);
-        if (mixture != null)
+        var data = new FluidData(GetDisplayName(), color, volume, maxVolume);
+        if (mixture == null || mixture.Count == 0)
+            return data;
+
+        data.mixture = new List<FluidCompositionEntry>(mixture);
+        float totalConcentration = 0f;
+        foreach (var entry in data.mixture)
+            totalConcentration += Mathf.Max(0f, entry.concentration);
+
+        if (totalConcentration <= 0f)
+            return data;
+
+        for (int i = 0; i < data.mixture.Count; i++)
         {
-            data.mixture = new List<FluidCompositionEntry>(mixture);
-            for (int i = 0; i < data.mixture.Count; i++)
-            {
-                data.mixture[i].volume = volume > 0f && currentVolume > 0f
-                    ? (data.mixture[i].volume / currentVolume) * volume
-                    : 0f;
-                data.mixture[i].concentration = volume > 0f ? data.mixture[i].volume / volume : 0f;
-            }
+            var entry = data.mixture[i];
+            entry.concentration = entry.concentration / totalConcentration;
+            data.mixture[i] = entry;
         }
+
         return data;
     }
 }

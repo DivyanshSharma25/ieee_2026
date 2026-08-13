@@ -7,9 +7,40 @@ public abstract class LiquidContainer : MonoBehaviour
     [SerializeField]
     protected FluidData fluidData = new FluidData("Water", new Color(0.35f, 0.6f, 1f, 1f), 100f, 100f);
 
+    private void Start()
+    {
+        if (fluidData.mixture == null || fluidData.mixture.Count == 0)
+        {
+            if (fluidData.currentVolume > 0.0001f)
+            {
+                fluidData.mixture = new List<FluidCompositionEntry>
+                {
+                    new FluidCompositionEntry
+                    {
+                        fluidName = string.IsNullOrWhiteSpace(fluidData.GetDisplayName()) || string.Equals(fluidData.GetDisplayName(), "Empty", StringComparison.OrdinalIgnoreCase) ? "Liquid" : fluidData.GetDisplayName(),
+                        color = fluidData.color,
+                        concentration = 1f
+                    }
+                };
+            }
+            else
+            {
+                ResetComposition();
+                return;
+            }
+        }
+
+        fluidData.color = CalculateAverageColor(fluidData.mixture);
+    }
+
     public FluidData CurrentFluidData => fluidData;
 
     public IReadOnlyList<FluidCompositionEntry> MixtureContents => fluidData.mixture ?? new List<FluidCompositionEntry>();
+
+    public string GetFluidDisplayName()
+    {
+        return fluidData.GetDisplayName();
+    }
 
     public float GetConcentration(string fluidName)
     {
@@ -17,19 +48,12 @@ public abstract class LiquidContainer : MonoBehaviour
             return 0f;
 
         if (fluidData.mixture == null || fluidData.mixture.Count == 0)
-            return fluidData.currentVolume > 0f && string.Equals(fluidData.fluidName, fluidName, StringComparison.OrdinalIgnoreCase) ? 1f : 0f;
-
-        float totalVolume = 0f;
-        foreach (var component in fluidData.mixture)
-            totalVolume += Mathf.Max(0f, component.volume);
-
-        if (totalVolume <= 0f)
-            return 0f;
+            return fluidData.currentVolume > 0f ? 1f : 0f;
 
         foreach (var component in fluidData.mixture)
         {
             if (string.Equals(component.fluidName, fluidName, StringComparison.OrdinalIgnoreCase))
-                return component.volume / totalVolume;
+                return Mathf.Clamp01(component.concentration);
         }
 
         return 0f;
@@ -40,7 +64,7 @@ public abstract class LiquidContainer : MonoBehaviour
         float requested = Mathf.Max(0f, amount);
         float extracted = Mathf.Min(requested, fluidData.currentVolume);
 
-        var sample = new FluidData(fluidData.fluidName, fluidData.color, extracted, extracted);
+        var sample = new FluidData(GetFluidDisplayName(), fluidData.color, extracted, extracted);
         sample.mixture = new List<FluidCompositionEntry>();
 
         if (extracted <= 0f)
@@ -50,25 +74,16 @@ public abstract class LiquidContainer : MonoBehaviour
             return sample;
         }
 
-        float totalVolume = 0f;
-        if (fluidData.mixture != null)
-        {
-            foreach (var component in fluidData.mixture)
-                totalVolume += Mathf.Max(0f, component.volume);
-        }
-
-        if (totalVolume <= 0f || fluidData.mixture == null || fluidData.mixture.Count == 0)
+        if (fluidData.mixture == null || fluidData.mixture.Count == 0)
         {
             fluidData.currentVolume = Mathf.Max(0f, fluidData.currentVolume - extracted);
-            sample.fluidName = fluidData.fluidName;
             sample.color = fluidData.color;
             sample.mixture = new List<FluidCompositionEntry>
             {
                 new FluidCompositionEntry
                 {
-                    fluidName = fluidData.fluidName,
+                    fluidName = GetFluidDisplayName() == "Empty" ? "Liquid" : GetFluidDisplayName(),
                     color = fluidData.color,
-                    volume = extracted,
                     concentration = 1f
                 }
             };
@@ -76,38 +91,42 @@ public abstract class LiquidContainer : MonoBehaviour
             return sample;
         }
 
-        for (int i = fluidData.mixture.Count - 1; i >= 0; i--)
+        float remainingVolume = Mathf.Max(0f, fluidData.currentVolume - extracted);
+        var remainingMixture = new List<FluidCompositionEntry>();
+        var sampledMixture = new List<FluidCompositionEntry>();
+
+        foreach (var component in fluidData.mixture)
         {
-            var component = fluidData.mixture[i];
-            if (component.volume <= 0f)
-            {
-                fluidData.mixture.RemoveAt(i);
-                continue;
-            }
-
-            float removedVolume = (component.volume / totalVolume) * extracted;
-            if (removedVolume <= 0f)
+            if (component.concentration <= 0f)
                 continue;
 
-            sample.mixture.Add(new FluidCompositionEntry
+            float componentVolume = fluidData.currentVolume * component.concentration;
+            float removedVolume = component.concentration * extracted;
+            float remainingComponentVolume = Mathf.Max(0f, componentVolume - removedVolume);
+
+            sampledMixture.Add(new FluidCompositionEntry
             {
                 fluidName = component.fluidName,
                 color = component.color,
-                volume = removedVolume,
                 concentration = extracted > 0f ? removedVolume / extracted : 0f
             });
 
-            component.volume -= removedVolume;
-            if (component.volume <= 0.0001f)
-                fluidData.mixture.RemoveAt(i);
-            else
-                fluidData.mixture[i] = component;
+            if (remainingComponentVolume > 0f)
+            {
+                remainingMixture.Add(new FluidCompositionEntry
+                {
+                    fluidName = component.fluidName,
+                    color = component.color,
+                    concentration = remainingVolume > 0f ? remainingComponentVolume / remainingVolume : 0f
+                });
+            }
         }
 
-        fluidData.currentVolume = Mathf.Max(0f, fluidData.currentVolume - extracted);
+        fluidData.currentVolume = remainingVolume;
+        fluidData.mixture = remainingMixture;
         RecalculateComposition();
 
-        sample.fluidName = sample.mixture.Count > 1 ? "Mixture" : (sample.mixture.Count == 1 ? sample.mixture[0].fluidName : fluidData.fluidName);
+        sample.mixture = sampledMixture;
         sample.color = CalculateAverageColor(sample.mixture);
         sample.maxVolume = extracted;
         sample.currentVolume = extracted;
@@ -133,45 +152,45 @@ public abstract class LiquidContainer : MonoBehaviour
             {
                 new FluidCompositionEntry
                 {
-                    fluidName = incomingFluid.fluidName,
+                    fluidName = incomingFluid.GetDisplayName(),
                     color = incomingFluid.color,
-                    volume = incomingVolume,
                     concentration = 1f
                 }
             };
 
-        float incomingTotal = 0f;
-        foreach (var component in incomingMixture)
-            incomingTotal += Mathf.Max(0f, component.volume);
+        float oldTotal = fluidData.currentVolume;
+        float newTotal = oldTotal + accepted;
+        var mergedMixture = new List<FluidCompositionEntry>();
 
-        if (incomingTotal <= 0f)
-            incomingTotal = incomingVolume;
-
-        if (fluidData.currentVolume <= 0.0001f)
+        if (fluidData.mixture != null)
         {
-            fluidData.mixture = new List<FluidCompositionEntry>();
-            fluidData.fluidName = incomingFluid.fluidName;
-            fluidData.color = incomingFluid.color;
+            foreach (var existing in fluidData.mixture)
+                mergedMixture.Add(new FluidCompositionEntry
+                {
+                    fluidName = existing.fluidName,
+                    color = existing.color,
+                    concentration = existing.concentration
+                });
         }
 
         foreach (var component in incomingMixture)
         {
-            float componentVolume = incomingTotal > 0f ? (component.volume / incomingTotal) * accepted : 0f;
-            if (componentVolume <= 0f)
+            if (component.concentration <= 0f)
                 continue;
 
-            if (fluidData.mixture == null)
-                fluidData.mixture = new List<FluidCompositionEntry>();
-
+            float addedVolume = accepted * component.concentration;
             bool found = false;
-            for (int i = 0; i < fluidData.mixture.Count; i++)
+
+            for (int i = 0; i < mergedMixture.Count; i++)
             {
-                var existing = fluidData.mixture[i];
+                var existing = mergedMixture[i];
                 if (string.Equals(existing.fluidName, component.fluidName, StringComparison.OrdinalIgnoreCase))
                 {
-                    existing.volume += componentVolume;
+                    float existingVolume = oldTotal * existing.concentration;
+                    float newVolume = existingVolume + addedVolume;
                     existing.color = component.color;
-                    fluidData.mixture[i] = existing;
+                    existing.concentration = newTotal > 0f ? newVolume / newTotal : 0f;
+                    mergedMixture[i] = existing;
                     found = true;
                     break;
                 }
@@ -179,17 +198,17 @@ public abstract class LiquidContainer : MonoBehaviour
 
             if (!found)
             {
-                fluidData.mixture.Add(new FluidCompositionEntry
+                mergedMixture.Add(new FluidCompositionEntry
                 {
                     fluidName = component.fluidName,
                     color = component.color,
-                    volume = componentVolume,
-                    concentration = 0f
+                    concentration = newTotal > 0f ? addedVolume / newTotal : 1f
                 });
             }
         }
 
-        fluidData.currentVolume += accepted;
+        fluidData.currentVolume = newTotal;
+        fluidData.mixture = mergedMixture;
         RecalculateComposition();
         return accepted;
     }
@@ -199,22 +218,28 @@ public abstract class LiquidContainer : MonoBehaviour
         if (fluidData.mixture == null)
             fluidData.mixture = new List<FluidCompositionEntry>();
 
-        float totalVolume = 0f;
         for (int i = fluidData.mixture.Count - 1; i >= 0; i--)
         {
-            if (fluidData.mixture[i].volume <= 0.0001f)
+            if (fluidData.mixture[i].concentration <= 0.0001f)
             {
                 fluidData.mixture.RemoveAt(i);
-                continue;
             }
-
-            totalVolume += fluidData.mixture[i].volume;
         }
 
-        if (totalVolume <= 0.0001f)
+        if (fluidData.currentVolume <= 0.0001f || fluidData.mixture.Count == 0)
         {
             fluidData.mixture.Clear();
-            fluidData.fluidName = "Empty";
+            fluidData.color = Color.clear;
+            return;
+        }
+
+        float totalConcentration = 0f;
+        foreach (var component in fluidData.mixture)
+            totalConcentration += Mathf.Max(0f, component.concentration);
+
+        if (totalConcentration <= 0.0001f)
+        {
+            fluidData.mixture.Clear();
             fluidData.color = Color.clear;
             return;
         }
@@ -222,17 +247,15 @@ public abstract class LiquidContainer : MonoBehaviour
         for (int i = 0; i < fluidData.mixture.Count; i++)
         {
             var component = fluidData.mixture[i];
-            component.concentration = component.volume / totalVolume;
+            component.concentration = component.concentration / totalConcentration;
             fluidData.mixture[i] = component;
         }
 
         fluidData.color = CalculateAverageColor(fluidData.mixture);
-        fluidData.fluidName = fluidData.mixture.Count == 1 ? fluidData.mixture[0].fluidName : "Mixture";
     }
 
     private void ResetComposition()
     {
-        fluidData.fluidName = "Empty";
         fluidData.color = Color.clear;
         fluidData.mixture = new List<FluidCompositionEntry>();
     }
@@ -242,21 +265,21 @@ public abstract class LiquidContainer : MonoBehaviour
         if (composition == null || composition.Count == 0)
             return Color.clear;
 
-        Vector4 total = Vector4.zero;
-        float totalVolume = 0f;
+        Vector3 total = Vector3.zero;
+        float totalConcentration = 0f;
 
         foreach (var component in composition)
         {
-            if (component.volume <= 0f)
+            if (component.concentration <= 0f)
                 continue;
 
-            totalVolume += component.volume;
-            total += new Vector4(component.color.r, component.color.g, component.color.b, component.color.a) * component.volume;
+            totalConcentration += component.concentration;
+            total += new Vector3(component.color.r, component.color.g, component.color.b) * component.concentration;
         }
 
-        if (totalVolume <= 0f)
+        if (totalConcentration <= 0f)
             return Color.clear;
 
-        return new Color(total.x / totalVolume, total.y / totalVolume, total.z / totalVolume, total.w / totalVolume);
+        return new Color(total.x / totalConcentration, total.y / totalConcentration, total.z / totalConcentration, 1f);
     }
 }

@@ -94,7 +94,7 @@ public class PipetteTip : MonoBehaviour
             CurrentSubmergedContainer = container;
             m_Controller?.SetSubmergedContainer(container);
             var fd = container.CurrentFluidData;
-            Debug.Log($"Pipette tip submerged in '{container.gameObject.name}' (fluid: {fd.fluidName}, volume: {fd.currentVolume} / {fd.maxVolume})", this);
+            Debug.Log($"Pipette tip submerged in '{container.gameObject.name}' (fluid: {fd.GetDisplayName()}, volume: {fd.currentVolume} / {fd.maxVolume})", this);
         }
     }
 }

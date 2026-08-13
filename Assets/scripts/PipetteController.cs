@@ -282,7 +282,7 @@ public class PipetteController : MonoBehaviour
             LoadedFluid = pulled;
             CurrentState = PipetteState.Filled;
             m_CurrentTip.SetFluidVisual(LoadedFluid.color, true);
-            Debug.Log($"Pulled {pulled.currentVolume:0.##} µL of '{pulled.fluidName}' from '{m_SubmergedContainer.gameObject.name}'. Remaining in container: {m_SubmergedContainer.CurrentFluidData.currentVolume:0.##} µL", this);
+            Debug.Log($"Pulled {pulled.currentVolume:0.##} µL of '{pulled.GetDisplayName()}' from '{m_SubmergedContainer.gameObject.name}'. Remaining in container: {m_SubmergedContainer.CurrentFluidData.currentVolume:0.##} µL", this);
             return;
         }
 
@@ -292,7 +292,7 @@ public class PipetteController : MonoBehaviour
             if (pushed <= 0f)
                 return;
 
-            Debug.Log($"Pushed {pushed:0.##} µL of '{LoadedFluid.fluidName}' into '{m_SubmergedContainer.gameObject.name}'. Container now: {m_SubmergedContainer.CurrentFluidData.currentVolume:0.##} µL", this);
+            Debug.Log($"Pushed {pushed:0.##} µL of '{LoadedFluid.GetDisplayName()}' into '{m_SubmergedContainer.gameObject.name}'. Container now: {m_SubmergedContainer.CurrentFluidData.currentVolume:0.##} µL", this);
 
             LoadedFluid = default;
             CurrentState = PipetteState.Ready;
