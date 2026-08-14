@@ -14993,6 +14993,34 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 152991191343785669, guid: fd87ebe4856b11941848cc37b3f4d931, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 152991191343785669, guid: fd87ebe4856b11941848cc37b3f4d931, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 152991191343785669, guid: fd87ebe4856b11941848cc37b3f4d931, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2007532597}
+    - target: {fileID: 152991191343785669, guid: fd87ebe4856b11941848cc37b3f4d931, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 152991191343785669, guid: fd87ebe4856b11941848cc37b3f4d931, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: NextStep
+      objectReference: {fileID: 0}
+    - target: {fileID: 152991191343785669, guid: fd87ebe4856b11941848cc37b3f4d931, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: ExperimentManager, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 152991191343785669, guid: fd87ebe4856b11941848cc37b3f4d931, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 907495815864509183, guid: fd87ebe4856b11941848cc37b3f4d931, type: 3}
       propertyPath: m_Name
       value: expt1 concentration
@@ -15041,6 +15069,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7923721555471920169, guid: fd87ebe4856b11941848cc37b3f4d931, type: 3}
+      propertyPath: completionPanel
+      value: 
+      objectReference: {fileID: 2007532598}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -15079,6 +15111,22 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: fd87ebe4856b11941848cc37b3f4d931, type: 3}
+--- !u!114 &2007532597 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4284982824677795068, guid: fd87ebe4856b11941848cc37b3f4d931, type: 3}
+  m_PrefabInstance: {fileID: 2007532596}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f44afadd09bd65c4c96ce6a258a49b74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExperimentManager
+--- !u!1 &2007532598 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7221453174075055886, guid: fd87ebe4856b11941848cc37b3f4d931, type: 3}
+  m_PrefabInstance: {fileID: 2007532596}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2047904670 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -9068629496923131592, guid: 65e667e5974659c47b01e16b376178e3, type: 3}

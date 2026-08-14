@@ -10,11 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1b4f4e3033c0b1948b37362c71cc58a1, type: 3}
-  m_Name: Exp1_Spectrophotometry
+  m_Name: Exp2_GelElectrophoresis
   m_EditorClassIdentifier: Assembly-CSharp::ExperimentData
-  experimentName: Spectrophotometry
-  experimentDescription: Spectrophotometry is an analytical technique that measures
-    how much light a chemical substance absorbs when a beam of light passes through
-    it.
+  experimentName: 
+  experimentDescription: 
   steps: []
   nextExperiment: {fileID: 0}
