@@ -1,7 +1,12 @@
 using UnityEngine;
+using Autohand;
 
 public class PipetteTip : MonoBehaviour
 {
+    [Header("AutoHand")]
+    [SerializeField]
+    Grabbable tipGrabbable;
+
     [Header("Nozzle")]
     [SerializeField]
     [Tooltip("Assign the small trigger collider at the bottom of the tip.")]
@@ -25,6 +30,9 @@ public class PipetteTip : MonoBehaviour
 
     void Awake()
     {
+        if (tipGrabbable == null)
+            tipGrabbable = GetComponent<Grabbable>();
+
         if (nozzleTrigger == null)
             nozzleTrigger = GetComponent<Collider>();
 
