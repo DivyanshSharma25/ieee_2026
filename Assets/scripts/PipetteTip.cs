@@ -3,6 +3,10 @@ using Autohand;
 
 public class PipetteTip : MonoBehaviour
 {
+    [Header("AutoHand")]
+    [SerializeField]
+    Grabbable tipGrabbable;
+
     [Header("Nozzle")]
     [SerializeField]
     [Tooltip("Assign the small trigger collider at the bottom of the tip.")]
@@ -26,6 +30,9 @@ public class PipetteTip : MonoBehaviour
 
     void Awake()
     {
+        if (tipGrabbable == null)
+            tipGrabbable = GetComponent<Grabbable>();
+
         if (nozzleTrigger == null)
             nozzleTrigger = GetComponent<Collider>();
 
@@ -62,14 +69,11 @@ public class PipetteTip : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"Trigger enter: name='{other.name}', tag='{other.tag}'", this);
-        TryPlaceOnTipStand(other);
         UpdateContainerContact(other);
     }
 
     void OnTriggerStay(Collider other)
     {
-        TryPlaceOnTipStand(other);
         UpdateContainerContact(other);
     }
 
@@ -100,24 +104,5 @@ public class PipetteTip : MonoBehaviour
             var fd = container.CurrentFluidData;
             Debug.Log($"Pipette tip submerged in '{container.gameObject.name}' (fluid: {fd.GetDisplayName()}, volume: {fd.currentVolume} / {fd.maxVolume})", this);
         }
-    }
-
-    void TryPlaceOnTipStand(Collider other)
-    {
-        if (!other.CompareTag("tip_place"))
-            return;
-
-        var placePoint = other.GetComponentInParent<PlacePoint>();
-        if (placePoint == null)
-            return;
-
-        var grabbable = GetComponentInParent<Grabbable>();
-        if (grabbable == null)
-            return;
-
-        if (placePoint.placedObject == grabbable)
-            return;
-
-        placePoint.TryPlace(grabbable);
     }
 }

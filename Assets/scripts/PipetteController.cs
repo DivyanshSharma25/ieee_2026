@@ -2,9 +2,7 @@ using System.Collections; // Required for Coroutines
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
-using UnityEngine.XR.Interaction.Toolkit;
-using UnityEngine.XR.Interaction.Toolkit.Interactors;
-using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using Autohand;
 
 public enum PipetteState
 {
@@ -15,9 +13,12 @@ public enum PipetteState
 
 public class PipetteController : MonoBehaviour
 {
-    [Header("XR")]
+    [Header("AutoHand")]
     [SerializeField]
-    XRSocketInteractor tipSocketInteractor;
+    PlacePoint tipSocket;
+
+    [SerializeField]
+    Grabbable pipetteGrabbable;
 
     [Header("Input")]
     [SerializeField]
@@ -81,12 +82,27 @@ public class PipetteController : MonoBehaviour
     PipetteTip m_CurrentTip;
     LiquidContainer m_SubmergedContainer;
 
+    void Awake()
+    {
+        if (pipetteGrabbable == null)
+            pipetteGrabbable = GetComponent<Grabbable>();
+
+        if (tipSocket == null)
+            tipSocket = GetComponentInChildren<PlacePoint>();
+    }
+
     void OnEnable()
     {
-        if (tipSocketInteractor != null)
+        if (tipSocket != null)
         {
-            tipSocketInteractor.selectEntered.AddListener(OnTipAttached);
-            tipSocketInteractor.selectExited.AddListener(OnTipDetached);
+            tipSocket.OnPlaceEvent += OnTipAttached;
+            tipSocket.OnRemoveEvent += OnTipDetached;
+        }
+
+        if (pipetteGrabbable != null)
+        {
+            pipetteGrabbable.OnGrabEvent += OnPipetteGrabbed;
+            pipetteGrabbable.OnReleaseEvent += OnPipetteReleased;
         }
 
         if (transferAction != null)
@@ -107,10 +123,16 @@ public class PipetteController : MonoBehaviour
 
     void OnDisable()
     {
-        if (tipSocketInteractor != null)
+        if (tipSocket != null)
         {
-            tipSocketInteractor.selectEntered.RemoveListener(OnTipAttached);
-            tipSocketInteractor.selectExited.RemoveListener(OnTipDetached);
+            tipSocket.OnPlaceEvent -= OnTipAttached;
+            tipSocket.OnRemoveEvent -= OnTipDetached;
+        }
+
+        if (pipetteGrabbable != null)
+        {
+            pipetteGrabbable.OnGrabEvent -= OnPipetteGrabbed;
+            pipetteGrabbable.OnReleaseEvent -= OnPipetteReleased;
         }
 
         if (transferAction != null)
@@ -189,42 +211,40 @@ public class PipetteController : MonoBehaviour
     public void EjectTip()
     {
         print("Ejecting tip");
-        if (tipSocketInteractor == null || !tipSocketInteractor.hasSelection)
+
+        if (m_CurrentTip == null)
         {
             ResetToEmptyState();
             return;
         }
 
-        IXRSelectInteractable selected = tipSocketInteractor.interactablesSelected.Count > 0
-            ? tipSocketInteractor.interactablesSelected[0]
-            : null;
+        var tipGrabbable = m_CurrentTip.GetComponent<Grabbable>();
+        if (tipSocket != null && tipGrabbable != null && tipSocket.placedObject == tipGrabbable)
+        {
+            tipSocket.Remove(tipGrabbable);
+        }
 
-        if (selected != null && tipSocketInteractor.interactionManager != null)
-            tipSocketInteractor.interactionManager.SelectExit(tipSocketInteractor, selected);
-
-        var selectedComponent = selected as Component;
-        var tipRigidbody = selectedComponent != null ? selectedComponent.GetComponent<Rigidbody>() : null;
-
+        var tipRigidbody = m_CurrentTip.GetComponent<Rigidbody>();
         if (tipRigidbody != null)
         {
-            // Optional: Reset velocity before adding force so it shoots out cleanly
             tipRigidbody.linearVelocity = Vector3.zero;
             tipRigidbody.angularVelocity = Vector3.zero;
             tipRigidbody.AddForce(-transform.up * ejectForce, ForceMode.Impulse);
         }
 
-        // Disable socket temporarily so it doesn't instantly grab the tip back
         StartCoroutine(TemporarilyDisableSocket());
-
         ResetToEmptyState();
     }
 
     private IEnumerator TemporarilyDisableSocket()
     {
-        // socketActive turns off the socket's grabbing logic without disabling the GameObject
-        tipSocketInteractor.socketActive = false;
+        if (tipSocket != null)
+            tipSocket.enabled = false;
+
         yield return new WaitForSeconds(socketCooldown);
-        tipSocketInteractor.socketActive = true;
+
+        if (tipSocket != null)
+            tipSocket.enabled = true;
     }
 
     void OnTransferActionPerformed(InputAction.CallbackContext context)
@@ -238,11 +258,50 @@ public class PipetteController : MonoBehaviour
         EjectTip();
     }
 
-    void OnTipAttached(SelectEnterEventArgs args)
+    void OnTipAttached(PlacePoint point, Grabbable placedObject)
     {
-        var tipComponent = (args.interactableObject as Component)?.GetComponentInChildren<PipetteTip>();
+        if (placedObject == null)
+            return;
+
+        var tipComponent = placedObject.GetComponentInChildren<PipetteTip>();
         if (tipComponent == null)
             return;
+
+        AttachTip(tipComponent);
+    }
+
+    void OnTipDetached(PlacePoint point, Grabbable removedObject)
+    {
+        if (removedObject == null)
+        {
+            ResetToEmptyState();
+            return;
+        }
+
+        var tipComponent = removedObject.GetComponentInChildren<PipetteTip>();
+        if (tipComponent != null && tipComponent == m_CurrentTip)
+            tipComponent.UnregisterController(this);
+
+        ResetToEmptyState();
+    }
+
+    void OnPipetteGrabbed(Hand hand, Grabbable grip)
+    {
+        // No extra behavior required; this keeps the pipette usable as a grabbable object.
+    }
+
+    void OnPipetteReleased(Hand hand, Grabbable grip)
+    {
+        // No extra behavior required; this keeps the pipette usable as a grabbable object.
+    }
+
+    void AttachTip(PipetteTip tipComponent)
+    {
+        if (m_CurrentTip == tipComponent)
+            return;
+
+        if (m_CurrentTip != null)
+            m_CurrentTip.UnregisterController(this);
 
         m_CurrentTip = tipComponent;
         m_CurrentTip.RegisterController(this);
@@ -251,15 +310,6 @@ public class PipetteController : MonoBehaviour
         LoadedFluid = default;
         m_CurrentTip.SetFluidVisual(Color.clear, false);
         CurrentState = PipetteState.Ready;
-    }
-
-    void OnTipDetached(SelectExitEventArgs args)
-    {
-        var tipComponent = (args.interactableObject as Component)?.GetComponentInChildren<PipetteTip>();
-        if (tipComponent != null)
-            tipComponent.UnregisterController(this);
-
-        ResetToEmptyState();
     }
 
     void TryTransferFluid()
