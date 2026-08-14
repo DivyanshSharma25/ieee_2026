@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using Autohand;
@@ -25,8 +26,13 @@ public class spectro : MonoBehaviour
     [Header("Display")]
     public TMP_Text displayText;
 
+    [Header("Graph")]
+    public SpectroGraphDisplay graphDisplay;
+    public List<Vector2> measurementHistory = new List<Vector2>();
+
     private bool isOpen = true;
     private bool isLocked = false;
+    private bool pendingMeasurement = false;
     private Coroutine measurementRoutine;
 
     private void Start()
@@ -50,6 +56,16 @@ public class spectro : MonoBehaviour
         Vector3 currentEuler = hinge.localEulerAngles;
         float newX = Mathf.LerpAngle(currentEuler.x, targetX, Time.deltaTime * rotationSpeed);
         hinge.localEulerAngles = new Vector3(newX, currentEuler.y, currentEuler.z);
+
+        if (pendingMeasurement && !isOpen)
+        {
+            float closedDelta = Mathf.Abs(Mathf.DeltaAngle(newX, closedAngleX));
+            if (closedDelta < 0.25f)
+            {
+                pendingMeasurement = false;
+                StartMeasurement();
+            }
+        }
     }
 
     public void OnButtonPressed()
@@ -63,10 +79,11 @@ public class spectro : MonoBehaviour
         if (isOpen)
         {
             CloseMeter();
-            StartMeasurement();
+            pendingMeasurement = true;
             return;
         }
 
+        pendingMeasurement = false;
         OpenMeter();
     }
 
@@ -92,6 +109,14 @@ public class spectro : MonoBehaviour
     {
         if (isLocked)
             return;
+
+        if (isOpen)
+        {
+            pendingMeasurement = true;
+            print("Spectro lid is open. Closing before measuring...");
+            CloseMeter();
+            return;
+        }
 
         if (samplePoint == null || samplePoint.placedObject == null)
         {
@@ -135,6 +160,10 @@ public class spectro : MonoBehaviour
         var data = container.CurrentFluidData;
         float concentration = GetNonWaterConcentration(data);
         float absorbance = CalculateAbsorbance(concentration);
+
+        measurementHistory.Add(new Vector2(concentration, absorbance));
+        if (graphDisplay != null)
+            graphDisplay.UpdateGraph(measurementHistory, calibrationSlope, calibrationIntercept);
 
         if (displayText != null)
             displayText.text = "Absorbance: " + absorbance.ToString("F3");
@@ -188,6 +217,13 @@ public class spectro : MonoBehaviour
 
     public void OnMeasureButtonPressed()
     {
+        if (isOpen)
+        {
+            pendingMeasurement = true;
+            CloseMeter();
+            return;
+        }
+
         StartMeasurement();
     }
 
@@ -196,6 +232,13 @@ public class spectro : MonoBehaviour
         if (displayText != null)
             displayText.text = "Ready";
 
+        if (measurementRoutine != null)
+        {
+            StopCoroutine(measurementRoutine);
+            measurementRoutine = null;
+        }
+
+        pendingMeasurement = false;
         isLocked = false;
         isOpen = true;
         print("Spectro reset");

@@ -30,7 +30,7 @@ Material:
     - _Cull: 0
     - _FillLevel: 0
     m_Colors:
-    - _BaseColor: {r: 0, g: 0.5, b: 1, a: 1}
+    - _BaseColor: {r: 0, g: 0.5019608, b: 1, a: 1}
     - _EmptyColor: {r: 0.5849056, g: 0.5849056, b: 0.5849056, a: 0.3764706}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
