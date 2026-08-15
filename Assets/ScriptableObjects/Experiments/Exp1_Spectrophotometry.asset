@@ -16,5 +16,37 @@ MonoBehaviour:
   experimentDescription: Spectrophotometry is an analytical technique that measures
     how much light a chemical substance absorbs when a beam of light passes through
     it.
-  steps: []
+  steps:
+  - instructionText: Use pipette to mix distilled water and BSA in test tubes.
+    stepTitle: Prepare Solutions
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+    onStepComplete:
+      m_PersistentCalls:
+        m_Calls: []
+  - instructionText: ortex all test tube solutions.
+    stepTitle: Mix Solutions
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+    onStepComplete:
+      m_PersistentCalls:
+        m_Calls: []
+  - instructionText: Use the spectrophotometer to take readings.
+    stepTitle: Read Values
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+    onStepComplete:
+      m_PersistentCalls:
+        m_Calls: []
+  - instructionText: Plot graph to find the unknown concentration.
+    stepTitle: Calculate
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+    onStepComplete:
+      m_PersistentCalls:
+        m_Calls: []
   nextExperiment: {fileID: 0}
