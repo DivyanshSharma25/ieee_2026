@@ -17,32 +17,99 @@ MonoBehaviour:
     how much light a chemical substance absorbs when a beam of light passes through
     it.
   steps:
-  - instructionText: Use pipette to mix distilled water and BSA in test tubes.
-    stepTitle: Prepare Solutions
+  - instructionText: Bring the distilled water to the workstation to begin the serial
+      dilutions.
+    stepTitle: Prepare Distilled Water
     onStepStart:
       m_PersistentCalls:
         m_Calls: []
     onStepComplete:
       m_PersistentCalls:
         m_Calls: []
-  - instructionText: ortex all test tube solutions.
-    stepTitle: Mix Solutions
+  - instructionText: "Use the pipette to add 100 \xB5L of BSA and 900 \xB5L of distilled
+      water into the first test tube."
+    stepTitle: Prepare 0.1 Concentration
     onStepStart:
       m_PersistentCalls:
         m_Calls: []
     onStepComplete:
       m_PersistentCalls:
         m_Calls: []
-  - instructionText: Use the spectrophotometer to take readings.
-    stepTitle: Read Values
+  - instructionText: "Use the pipette to add 200 \xB5L of BSA and 800 \xB5L of distilled
+      water into the second test tube."
+    stepTitle: Prepare 0.2 Concentration
     onStepStart:
       m_PersistentCalls:
         m_Calls: []
     onStepComplete:
       m_PersistentCalls:
         m_Calls: []
-  - instructionText: Plot graph to find the unknown concentration.
-    stepTitle: Calculate
+  - instructionText: "Use the pipette to add 300 \xB5L of BSA and 700 \xB5L of distilled
+      water into the third test tube."
+    stepTitle: 0.3 Concentration
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+    onStepComplete:
+      m_PersistentCalls:
+        m_Calls: []
+  - instructionText: "Use the pipette to add 400 \xB5L of BSA and 600 \xB5L of distilled
+      water into the fourth test tube."
+    stepTitle: Prepare 0.4 Concentration
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+    onStepComplete:
+      m_PersistentCalls:
+        m_Calls: []
+  - instructionText: "Use the pipette to add 500 \xB5L of BSA and 500 \xB5L of distilled
+      water into the fifth test tube."
+    stepTitle: Prepare 0.5 Concentration
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+    onStepComplete:
+      m_PersistentCalls:
+        m_Calls: []
+  - instructionText: Take all the prepared test tubes and the unknown solution to
+      the spectrophotometer station.
+    stepTitle: Move to Spectrophotometer
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+    onStepComplete:
+      m_PersistentCalls:
+        m_Calls: []
+  - instructionText: Insert the blank cuvette (distilled water only) into the spectrophotometer
+      to calibrate it to zero.
+    stepTitle: Measure Blank
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+    onStepComplete:
+      m_PersistentCalls:
+        m_Calls: []
+  - instructionText: Insert the 0.1 through 0.5 concentration solutions one by one
+      and record their absorbance values.
+    stepTitle: Measure Standards
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+    onStepComplete:
+      m_PersistentCalls:
+        m_Calls: []
+  - instructionText: Insert the unknown solution into the spectrophotometer and record
+      its absorbance value.
+    stepTitle: Measure Unknown
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+    onStepComplete:
+      m_PersistentCalls:
+        m_Calls: []
+  - instructionText: lot the 0.1-0.5 values to create a standard curve, then map
+      the unknown solution's absorbance onto the plot to find its concentration.
+    stepTitle: Plot and Analyze
     onStepStart:
       m_PersistentCalls:
         m_Calls: []
