@@ -17,103 +17,93 @@ MonoBehaviour:
     how much light a chemical substance absorbs when a beam of light passes through
     it.
   steps:
-  - instructionText: Bring the distilled water to the workstation to begin the serial
-      dilutions.
-    stepTitle: Prepare Distilled Water
+  - instructionText: "Pipette 800 \xB5L of distilled water into the blank test tube."
+    stepTitle: Prepare Blank
     onStepStart:
       m_PersistentCalls:
         m_Calls: []
     onStepComplete:
       m_PersistentCalls:
         m_Calls: []
-  - instructionText: "Use the pipette to add 100 \xB5L of BSA and 900 \xB5L of distilled
-      water into the first test tube."
-    stepTitle: Prepare 0.1 Concentration
+  - instructionText: "Pipette 20 \xB5L of BSA stock and 780 \xB5L of distilled water
+      into S1."
+    stepTitle: "Prepare S1 (20 \xB5g/mL)"
     onStepStart:
       m_PersistentCalls:
         m_Calls: []
     onStepComplete:
       m_PersistentCalls:
         m_Calls: []
-  - instructionText: "Use the pipette to add 200 \xB5L of BSA and 800 \xB5L of distilled
-      water into the second test tube."
-    stepTitle: Prepare 0.2 Concentration
+  - instructionText: "Pipette 40 \xB5L of BSA stock and 760 \xB5L of distilled water
+      into S2."
+    stepTitle: "Pipette 20 \xB5L of BSA stock and 780 \xB5L of distilled water into
+      S1."
     onStepStart:
       m_PersistentCalls:
         m_Calls: []
     onStepComplete:
       m_PersistentCalls:
         m_Calls: []
-  - instructionText: "Use the pipette to add 300 \xB5L of BSA and 700 \xB5L of distilled
-      water into the third test tube."
-    stepTitle: 0.3 Concentration
+  - instructionText: "Pipette 60 \xB5L of BSA stock and 740 \xB5L of distilled water
+      into S3"
+    stepTitle: "Prepare S3 (60 \xB5g/mL)"
     onStepStart:
       m_PersistentCalls:
         m_Calls: []
     onStepComplete:
       m_PersistentCalls:
         m_Calls: []
-  - instructionText: "Use the pipette to add 400 \xB5L of BSA and 600 \xB5L of distilled
-      water into the fourth test tube."
-    stepTitle: Prepare 0.4 Concentration
+  - instructionText: "Pipette 80 \xB5L of BSA stock and 720 \xB5L of distilled water
+      into S4."
+    stepTitle: "Prepare S4 (80 \xB5g/mL)"
     onStepStart:
       m_PersistentCalls:
         m_Calls: []
     onStepComplete:
       m_PersistentCalls:
         m_Calls: []
-  - instructionText: "Use the pipette to add 500 \xB5L of BSA and 500 \xB5L of distilled
-      water into the fifth test tube."
-    stepTitle: Prepare 0.5 Concentration
+  - instructionText: "Pipette 100 \xB5L of BSA stock and 700 \xB5L of distilled water
+      into S5."
+    stepTitle: "Prepare S5 (100 \xB5g/mL)"
     onStepStart:
       m_PersistentCalls:
         m_Calls: []
     onStepComplete:
       m_PersistentCalls:
         m_Calls: []
-  - instructionText: Take all the prepared test tubes and the unknown solution to
-      the spectrophotometer station.
-    stepTitle: Move to Spectrophotometer
+  - instructionText: "Pipette 100 \xB5L of Unknown sample and 700 \xB5L of distilled
+      water into the Unknown tube."
+    stepTitle: Prepare Unknown
     onStepStart:
       m_PersistentCalls:
         m_Calls: []
     onStepComplete:
       m_PersistentCalls:
         m_Calls: []
-  - instructionText: Insert the blank cuvette (distilled water only) into the spectrophotometer
-      to calibrate it to zero.
-    stepTitle: Measure Blank
+  - instructionText: "Add 200 \xB5L of Bradford reagent to all 7 test tubes."
+    stepTitle: Add Bradford Reagent
     onStepStart:
       m_PersistentCalls:
         m_Calls: []
     onStepComplete:
       m_PersistentCalls:
         m_Calls: []
-  - instructionText: Insert the 0.1 through 0.5 concentration solutions one by one
-      and record their absorbance values.
-    stepTitle: Measure Standards
+  - instructionText: Vortex all test tubes, then wait 5 minutes for the color to
+      develop.
+    stepTitle: Mix and Incubate
     onStepStart:
       m_PersistentCalls:
         m_Calls: []
     onStepComplete:
       m_PersistentCalls:
         m_Calls: []
-  - instructionText: Insert the unknown solution into the spectrophotometer and record
-      its absorbance value.
-    stepTitle: Measure Unknown
+  - instructionText: Transfer solutions to cuvettes. Measure and record absorbance
+      at 595 nm for all samples.
+    stepTitle: Measure Absorbance
     onStepStart:
       m_PersistentCalls:
         m_Calls: []
     onStepComplete:
       m_PersistentCalls:
         m_Calls: []
-  - instructionText: lot the 0.1-0.5 values to create a standard curve, then map
-      the unknown solution's absorbance onto the plot to find its concentration.
-    stepTitle: Plot and Analyze
-    onStepStart:
-      m_PersistentCalls:
-        m_Calls: []
-    onStepComplete:
-      m_PersistentCalls:
-        m_Calls: []
-  nextExperiment: {fileID: 0}
+  nextExperiment: {fileID: 11400000, guid: aae6838d98fb4ab47adbea2d52acbcb8, type: 2}
