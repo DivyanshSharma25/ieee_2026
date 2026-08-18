@@ -13,7 +13,6 @@ public class VRInstructionUI : MonoBehaviour
 
     [Header("Button")]
     [SerializeField] private Button nextStepButton;
-    [SerializeField] private TextMeshProUGUI nextStepButtonLabel;
 
     [Header("Completion UI")]
     [SerializeField] private GameObject completionPanel;
@@ -27,7 +26,6 @@ public class VRInstructionUI : MonoBehaviour
     {
         if (completionPanel != null) completionPanel.SetActive(false);
         SubscribeToEvents();
-        SetInstructionText("Loading experiment...");
     }
 
     private void OnDestroy() => UnsubscribeFromEvents();
@@ -69,10 +67,6 @@ public class VRInstructionUI : MonoBehaviour
             stepTitleText.text = string.IsNullOrEmpty(step.stepTitle) ? $"Step {stepNumber}" : step.stepTitle;
 
         SetInstructionTextAnimated(step.instructionText);
-
-        bool isLastStep = stepNumber == totalSteps;
-        if (nextStepButtonLabel != null)
-            nextStepButtonLabel.text = isLastStep ? "Finish Experiment" : "Next Step \u25B6";
     }
 
     private void HandleExperimentCompleted(ExperimentData completed) { }
@@ -101,28 +95,29 @@ public class VRInstructionUI : MonoBehaviour
 
         float half = textFadeDuration / 2f;
         float elapsed = 0f;
-        Color start = instructionText.color;
-        Color clear = new Color(start.r, start.g, start.b, 0f);
+        Color current = instructionText.color;
+        Color fullOpacity = new Color(current.r, current.g, current.b, 1f);
+        Color transparent = new Color(current.r, current.g, current.b, 0f);
 
         while (elapsed < half)
         {
             elapsed += Time.deltaTime;
-            instructionText.color = Color.Lerp(start, clear, elapsed / half);
+            instructionText.color = Color.Lerp(fullOpacity, transparent, elapsed / half);
             yield return null;
         }
 
         instructionText.text = newText;
-        instructionText.color = clear;
+        instructionText.color = transparent;
 
         elapsed = 0f;
         while (elapsed < half)
         {
             elapsed += Time.deltaTime;
-            instructionText.color = Color.Lerp(clear, start, elapsed / half);
+            instructionText.color = Color.Lerp(transparent, fullOpacity, elapsed / half);
             yield return null;
         }
 
-        instructionText.color = start;
+        instructionText.color = fullOpacity;
         _fadeCoroutine = null;
     }
 

@@ -153,23 +153,22 @@ public class PipetteController : MonoBehaviour
 
     void Update()
     {
-        bool holdingPipette = CurrentState != PipetteState.Empty;
+        bool hasPipette = pipetteGrabbable != null && pipetteGrabbable.HeldCount() > 0;
+        bool holdingPipette = CurrentState != PipetteState.Empty || hasPipette;
 
-        // Show/hide volume UI while holding the pipette
         if (volumeText != null)
             volumeText.gameObject.SetActive(holdingPipette);
 
         if (!holdingPipette || volumeText == null)
             return;
 
-        // If Ready, allow adjusting the transferAmount with the joystick
-        if (CurrentState == PipetteState.Ready && volumeControlAction != null && volumeControlAction.action != null)
+        if (volumeControlAction != null && volumeControlAction.action != null)
         {
             Vector2 stick = volumeControlAction.action.ReadValue<Vector2>();
             float input = Mathf.Abs(stick.y) > joystickDeadzone ? stick.y : 0f;
+
             if (Mathf.Abs(input) > 0f)
             {
-                // Track how long the joystick has been held for acceleration
                 m_HoldTime += Time.deltaTime;
 
                 float multiplier = 1f;
@@ -187,11 +186,17 @@ public class PipetteController : MonoBehaviour
                 m_HoldTime = 0f;
             }
 
+            if (CurrentState == PipetteState.Filled)
+            {
+                float amt = LoadedFluid.currentVolume;
+                volumeText.text = $"Dispense: {amt:0.0} µL (locked)";
+                return;
+            }
+
             volumeText.text = $"Set Volume: {transferAmount:0.0} µL";
             return;
         }
 
-        // If Filled, lock volume and show the amount that will be dispensed
         if (CurrentState == PipetteState.Filled)
         {
             float amt = LoadedFluid.currentVolume;
@@ -199,7 +204,6 @@ public class PipetteController : MonoBehaviour
             return;
         }
 
-        // If Empty (shouldn't reach here because early return), hide text
         volumeText.text = string.Empty;
     }
 
@@ -214,14 +218,24 @@ public class PipetteController : MonoBehaviour
 
         if (m_CurrentTip == null)
         {
+            if (tipSocket != null && tipSocket.placedObject != null)
+                tipSocket.Remove(tipSocket.placedObject);
+
             ResetToEmptyState();
             return;
         }
 
         var tipGrabbable = m_CurrentTip.GetComponent<Grabbable>();
-        if (tipSocket != null && tipGrabbable != null && tipSocket.placedObject == tipGrabbable)
+        if (tipGrabbable != null)
         {
-            tipSocket.Remove(tipGrabbable);
+            if (tipGrabbable.HeldCount() > 0)
+                tipGrabbable.ForceHandsRelease();
+
+            if (tipSocket != null && tipSocket.placedObject == tipGrabbable)
+                tipSocket.Remove(tipGrabbable);
+
+            if (tipGrabbable.rootTransform.parent != null && tipGrabbable.rootTransform.parent == tipSocket?.transform)
+                tipGrabbable.rootTransform.SetParent(null);
         }
 
         var tipRigidbody = m_CurrentTip.GetComponent<Rigidbody>();

@@ -107,7 +107,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: BSA
+  m_text: 'BSA
+
+    1mg/ml'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -134,8 +136,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 16.2
+  m_fontSizeBase: 16.2
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -194,7 +196,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e677948a737ae3043bec93a345eb6010, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TMPTextBender
-  radius: 5.16
+  radius: 3.3
   wrapAxis: 0
   invert: 1
   maxAnglePerSide: 80
@@ -275,6 +277,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: test_tb (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e0512d9a39b012547911cf1eff6a882f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -333,8 +339,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::container
   fluidData:
     color: {r: 0.35, g: 0.6, b: 1, a: 1}
-    currentVolume: 1000
-    maxVolume: 1500
+    currentVolume: 4000
+    maxVolume: 5000
     mixture:
     - fluidName: alcohol
       color: {r: 1, g: 0.34469396, b: 0.3254717, a: 1}

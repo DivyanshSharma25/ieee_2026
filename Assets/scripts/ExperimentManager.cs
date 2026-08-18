@@ -76,6 +76,25 @@ public class ExperimentManager : MonoBehaviour
         }
     }
 
+    public void PrevStep()
+    {
+        if (!IsRunning || CurrentExperiment == null)
+        {
+            Debug.LogWarning("[ExperimentManager] PrevStep() called but nothing is running.");
+            return;
+        }
+
+        bool isFirstStep = CurrentStepIndex <= 0;
+        if (isFirstStep)
+        {
+            Debug.LogWarning("[ExperimentManager] Already at first step, cannot go back.");
+            return;
+        }
+
+        CurrentStepIndex--;
+        ActivateCurrentStep();
+    }
+
     public void CompleteExperiment()
     {
         if (CurrentExperiment == null) return;

@@ -7,6 +7,16 @@ public abstract class LiquidContainer : MonoBehaviour
     [SerializeField]
     protected FluidData fluidData = new FluidData("Water", new Color(0.35f, 0.6f, 1f, 1f), 100f, 100f);
 
+    [Header("Visual Settings")]
+    [SerializeField]
+    private bool updateMaterialColor = true;
+
+    public bool UpdateMaterialColor
+    {
+        get => updateMaterialColor;
+        set => updateMaterialColor = value;
+    }
+
     private void Start()
     {
         if (fluidData.mixture == null || fluidData.mixture.Count == 0)

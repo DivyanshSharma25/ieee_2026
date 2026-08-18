@@ -310,7 +310,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -2.42, y: 1.45, z: -3.44}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.02530464, y: 0.025304643, z: 0.025304638}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1478032851048471376}
@@ -360,7 +360,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35cf5e54faf356546a228d34c04e6c81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PipetteController
-  pipetteBody: {fileID: 0}
+  tipSocket: {fileID: 0}
+  pipetteGrabbable: {fileID: 0}
   transferAction: {fileID: 83097790271614945, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   ejectTipAction: {fileID: 6081424302628181153, guid: c348712bda248c246b8c49b3db54643f, type: 3}
   volumeControlAction: {fileID: 8703886830717432966, guid: c348712bda248c246b8c49b3db54643f, type: 3}
@@ -368,12 +369,12 @@ MonoBehaviour:
   volumeText: {fileID: 2057830126673749015}
   minTransferAmount: 1
   maxTransferAmount: 200
-  adjustmentSpeed: 30
-  joystickDeadzone: 0.2
-  enableHoldAcceleration: 0
+  adjustmentSpeed: 2
+  joystickDeadzone: 0.1
+  enableHoldAcceleration: 1
   accelerationRate: 0.5
   maxAdjustmentMultiplier: 4
-  ejectForce: 1.5
+  ejectForce: 45.27
   socketCooldown: 0.5
 --- !u!114 &4116224119851299026
 MonoBehaviour:
@@ -460,14 +461,14 @@ MonoBehaviour:
   radiusOffset: {x: 0, y: 0.016, z: 0}
   parentOnPlace: 1
   forcePlace: 1
-  forceHandRelease: 1
+  forceHandRelease: 0
   destroyObjectOnPlace: 0
-  disableRigidbodyOnPlace: 0
+  disableRigidbodyOnPlace: 1
   disableGrabOnPlace: 0
   disablePlacePointOnPlace: 0
   makePlacedKinematic: 1
   placedJointLink: {fileID: 0}
-  jointBreakForce: 1000
+  jointBreakForce: 5000
   showPlaceRequirements: 1
   heldPlaceOnly: 0
   nameCompareType: 1
@@ -925,7 +926,6 @@ GameObject:
   - component: {fileID: 4531867618776710216}
   - component: {fileID: 8301315562453684497}
   - component: {fileID: 678942750398483980}
-  - component: {fileID: 5054910258486019605}
   m_Layer: 0
   m_Name: Quad
   m_TagString: Untagged
@@ -1006,25 +1006,3 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &5054910258486019605
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9017773247274643253}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}

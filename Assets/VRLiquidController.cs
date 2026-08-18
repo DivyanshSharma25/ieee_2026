@@ -95,7 +95,7 @@ public class VR_LiquidLevel : MonoBehaviour
         liquidRenderer.GetPropertyBlock(propBlock);
         propBlock.SetFloat(FillLevelID, nextFill);
 
-        if (targetContainer != null)
+        if (targetContainer != null && targetContainer.UpdateMaterialColor)
         {
             Color liquidColor = new Color(
                 data.color.r,

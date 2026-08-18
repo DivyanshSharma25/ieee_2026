@@ -17,8 +17,9 @@ MonoBehaviour:
     how much light a chemical substance absorbs when a beam of light passes through
     it.
   steps:
-  - instructionText: "Pipette 800 \xB5L of distilled water into the blank test tube."
-    stepTitle: Prepare Blank
+  - instructionText: "Pipette 10 \xB5L of BSA stock and 790 \xB5L of distilled water
+      into S1."
+    stepTitle: "Prepare S1 (10 \xB5g/mL)"
     onStepStart:
       m_PersistentCalls:
         m_Calls: []
@@ -26,8 +27,17 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   - instructionText: "Pipette 20 \xB5L of BSA stock and 780 \xB5L of distilled water
-      into S1."
-    stepTitle: "Prepare S1 (20 \xB5g/mL)"
+      into S2."
+    stepTitle: "Prepare S2 (20 \xB5g/mL)"
+    onStepStart:
+      m_PersistentCalls:
+        m_Calls: []
+    onStepComplete:
+      m_PersistentCalls:
+        m_Calls: []
+  - instructionText: "Pipette 30 \xB5L of BSA stock and 770 \xB5L of distilled water
+      into S3"
+    stepTitle: "Prepare S3 (30 \xB5g/mL)"
     onStepStart:
       m_PersistentCalls:
         m_Calls: []
@@ -35,36 +45,17 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
   - instructionText: "Pipette 40 \xB5L of BSA stock and 760 \xB5L of distilled water
-      into S2."
-    stepTitle: "Pipette 20 \xB5L of BSA stock and 780 \xB5L of distilled water into
-      S1."
-    onStepStart:
-      m_PersistentCalls:
-        m_Calls: []
-    onStepComplete:
-      m_PersistentCalls:
-        m_Calls: []
-  - instructionText: "Pipette 60 \xB5L of BSA stock and 740 \xB5L of distilled water
-      into S3"
-    stepTitle: "Prepare S3 (60 \xB5g/mL)"
-    onStepStart:
-      m_PersistentCalls:
-        m_Calls: []
-    onStepComplete:
-      m_PersistentCalls:
-        m_Calls: []
-  - instructionText: "Pipette 80 \xB5L of BSA stock and 720 \xB5L of distilled water
       into S4."
-    stepTitle: "Prepare S4 (80 \xB5g/mL)"
+    stepTitle: "Prepare S4 (40 \xB5g/mL)"
     onStepStart:
       m_PersistentCalls:
         m_Calls: []
     onStepComplete:
       m_PersistentCalls:
         m_Calls: []
-  - instructionText: "Pipette 100 \xB5L of BSA stock and 700 \xB5L of distilled water
+  - instructionText: "Pipette 50 \xB5L of BSA stock and 750 \xB5L of distilled water
       into S5."
-    stepTitle: "Prepare S5 (100 \xB5g/mL)"
+    stepTitle: "Prepare S5 (50 \xB5g/mL)"
     onStepStart:
       m_PersistentCalls:
         m_Calls: []

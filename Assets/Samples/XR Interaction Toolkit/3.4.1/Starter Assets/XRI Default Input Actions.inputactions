@@ -2085,7 +2085,7 @@
                     "id": "5631f5cc-8413-409a-9b91-510272d20800",
                     "expectedControlType": "Vector2",
                     "processors": "",
-                    "interactions": "Tap",
+                    "interactions": "",
                     "initialStateCheck": true
                 }
             ],
